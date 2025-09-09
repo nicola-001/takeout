@@ -4,12 +4,16 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.sky.constant.MessageConstant;
+import com.sky.constant.StatusConstant;
 import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
 import com.sky.entity.Dish;
 import com.sky.entity.DishFlavor;
+import com.sky.exception.DeletionNotAllowedException;
 import com.sky.mapper.DishFlavorMapper;
 import com.sky.mapper.DishMapper;
+import com.sky.mapper.SetmealDishMepper;
 import com.sky.result.PageResult;
 import com.sky.service.DishService;
 import com.sky.vo.DishVO;
@@ -20,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -30,7 +35,7 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
     @Autowired
     private DishFlavorMapper dishFlavorMapper;
     @Autowired
-    private DishService dishService;
+    private SetmealDishMepper setmealDishMepper;
 
     /*
      * 新增菜品
@@ -63,6 +68,38 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
         return new PageResult(page.getTotal(), page.getResult());
     }
 
+    /*
+     * 批量删除菜品
+     * */
+    @Transactional
+    @Override
+    public void deleteBatch(List<Long> ids) {
+        //判断当前菜品是否在售
+        for (Long id : ids) {
+            Dish dish = dishMapper.selectById(id);
+            if (dish == null) {
+                throw new DeletionNotAllowedException(MessageConstant.ID_NOT_FOUND);
+            }
+            if (dish.getStatus() == StatusConstant.ENABLE) {
+                throw new DeletionNotAllowedException(MessageConstant.DISH_ON_SALE);
+            }
+        }
+        //是否被某个套餐关联
+        List<Long> setmealIdsByDishIds = setmealDishMepper.getSetmealIdsByDishIds(ids);
+        if (setmealIdsByDishIds != null && setmealIdsByDishIds.size() > 0) {
+            //当前菜品被某个套餐关联，不能删除
+            throw new DeletionNotAllowedException(MessageConstant.DISH_BE_RELATED_BY_SETMEAL);
+        }
+
+        //删除菜品表中的数据
+        for (Long id : ids) {
+            System.out.println(id + "删除菜品表数据");
+            dishMapper.deleteById(id);
+            //删除口味数据
+            dishFlavorMapper.deleteByDishId(id);
+        }
+
+    }
 
 
 }

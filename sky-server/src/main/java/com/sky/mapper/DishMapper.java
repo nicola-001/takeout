@@ -22,8 +22,6 @@ public interface DishMapper extends BaseMapper<Dish> {
 
     Page<DishVO> pageQuery(DishPageQueryDTO dishPageQueryDTO);
 
-    IPage<DishVO> pageItem(DishPageQueryDTO dishPageQueryDTO);
 
 
-//    IPage<DishVO> pageItem(DishPageQueryDTO dishPageQueryDTO);
 }
