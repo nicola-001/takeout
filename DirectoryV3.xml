@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+ <trees>
+     <tree path="/sky-common/src/main/java/com/sky/context/BaseContext.java" title="存储用户信息的方法"/>
+     <tree path="/sky-common/src/main/java/com/sky/constant" title="枚举类型"/>
+     <tree path="/sky-common/src/main/java/com/sky/enumeration" title="枚举操作方法"/>
+     <tree path="/sky-common/src/main/java/com/sky/result" title="封装返回值类型" extension="" presentableText=""
+           tooltipTitle="" icon="" textColor="" backgroundColor=""/>
+     <tree path="/sky-pojo/src/main/java/com/sky/entity" title="与数据库直接映射类(数据源头)" extension="" presentableText=""
+           tooltipTitle="" icon="" textColor="" backgroundColor=""/>
+     <tree path="/sky-pojo/src/main/java/com/sky/dto" title="数据的搬运工(服务间传输-前端传递过来的数据)" extension=""
+           presentableText="" tooltipTitle="" icon="" textColor="" backgroundColor=""/>
+     <tree path="/sky-pojo/src/main/java/com/sky/vo" title="数据的最终呈现(给前端看的)"/>
+ </trees>

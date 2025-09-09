@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sky.mapper.DishFlavorMapper">
+
+    <!--
+        便利插入数据，collection="flavors"对应的是形参的名称，使用item获取每一项
+        item.entity中的名称 对应的是实体类中的属性名称
+        使用separator=","表示每项之间使用逗号隔开
+    -->
+    <insert id="insertBash">
+        insert into dish_flavor (dish_id, name, value) values
+        <foreach collection="flavors" item="item" separator=",">
+            (#{item.dishId},#{item.name},#{item.value})
+        </foreach>
+    </insert>
+</mapper>
