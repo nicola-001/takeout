@@ -49,17 +49,36 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
      * @return
      */
     @Bean
-    public Docket docket() {
+    public Docket docket1() {
         ApiInfo apiInfo = new ApiInfoBuilder()
                 .title("苍穹外卖项目接口文档")
                 .version("2.0")
                 .description("苍穹外卖项目接口文档")
                 .build();
         Docket docket = new Docket(DocumentationType.SWAGGER_2)
+                .groupName("管理端接口")//设置接口文档的分组名称
                 .apiInfo(apiInfo)
                 .select()
                 //指定要扫描的包
-                .apis(RequestHandlerSelectors.basePackage("com.sky.controller"))
+                .apis(RequestHandlerSelectors.basePackage("com.sky.controller.admin"))
+                .paths(PathSelectors.any())
+                .build();
+        return docket;
+    }
+
+    @Bean
+    public Docket docket2() {
+        ApiInfo apiInfo = new ApiInfoBuilder()
+                .title("苍穹外卖项目接口文档")
+                .version("2.0")
+                .description("苍穹外卖项目接口文档")
+                .build();
+        Docket docket = new Docket(DocumentationType.SWAGGER_2)
+                .groupName("用户端接口")
+                .apiInfo(apiInfo)
+                .select()
+                //指定要扫描的包
+                .apis(RequestHandlerSelectors.basePackage("com.sky.controller.user"))
                 .paths(PathSelectors.any())
                 .build();
         return docket;
@@ -95,14 +114,14 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
         log.info("消息转换器添加成功");
     }
     /*
-    * 消息转换器：
-    *   用户转变时间的格式
-    *   转变时间的格式：
-    *   1.使用@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    *   2.使用extendMessageConverters消息转换器
-    *       2.1 创建消息转换器对象
-    *       2.2 设置消息转换器对象
-    *       2.3 将消息转换器对象追加到mvc框架的转换器集合中
-    *
-    * */
+     * 消息转换器：
+     *   用户转变时间的格式
+     *   转变时间的格式：
+     *   1.使用@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+     *   2.使用extendMessageConverters消息转换器
+     *       2.1 创建消息转换器对象
+     *       2.2 设置消息转换器对象
+     *       2.3 将消息转换器对象追加到mvc框架的转换器集合中
+     *
+     * */
 }
