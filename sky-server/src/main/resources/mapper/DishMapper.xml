@@ -23,4 +23,11 @@
         ORDER BY d.update_time DESC
     </select>
 
+    <!-- 根据菜品id批量删除菜品数据-->
+    <delete id="deleteByIds">
+        DELETE FROM dish WHERE id IN
+        <foreach item="id" collection="ids" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
 </mapper>

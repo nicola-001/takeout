@@ -37,4 +37,5 @@ public class SkyApplication {
           entity表示与数据库直接映射的实体类
         2.写sql语句时，如果写查询d表中的全部数据可以直接写d.*  但是VO数据字段必须和数据库中的表一致 否则映射不上
         3.可以写 LIKE concat('%',#{name},'%')用于模糊查询
+        4.delete from xxx表 where id in (1,2,3) 优化删除的逻辑
 * */

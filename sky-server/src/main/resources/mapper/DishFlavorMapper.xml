@@ -15,6 +15,20 @@
         </foreach>
     </insert>
     <delete id="deleteByDishId">
-        delete from dish_flavor where dish_id = #{dishId}
+        delete
+        from dish_flavor
+        where dish_id = #{dishId}
     </delete>
+    <delete id="deleteByDishIds">
+        delete from dish_flavor where dish_id in
+        <foreach item="id" collection="ids" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <!-- 查询口味数据-->
+    <select id="listByDishId" resultType="com.sky.entity.DishFlavor">
+        select *
+        from dish_flavor
+        where dish_id = #{dishId}
+    </select>
 </mapper>
