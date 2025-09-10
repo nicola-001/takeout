@@ -30,4 +30,6 @@ public interface DishMapper extends BaseMapper<Dish> {
     void deleteByIds(List<Long> ids);
 
     List<Dish> list(Dish dish);
+
+    void startOrStop(Integer status, Long id);
 }

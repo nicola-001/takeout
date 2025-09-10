@@ -158,7 +158,7 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
         // 创建DishVO对象列表
         List<DishVO> dishVOList = new ArrayList<>();
         // 遍历菜品数据，将每个Dish对象转换成DishVO对象
-        for (Dish d : dishList){
+        for (Dish d : dishList) {
             DishVO dishVO = new DishVO();
             BeanUtils.copyProperties(d, dishVO);
 
@@ -168,6 +168,12 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
             dishVOList.add(dishVO);
         }
         return dishVOList;
+    }
+
+    //启售停售菜品
+    @Override
+    public void startOrStop(Integer status, Long id) {
+        dishMapper.startOrStop(status, id);
     }
 
 

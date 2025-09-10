@@ -44,4 +44,8 @@
             </if>
         </where>
     </select>
+    <!--    启售停售菜品-->
+    <update id="startOrStop">
+        UPDATE dish SET status = #{status} WHERE id = #{id}
+    </update>
 </mapper>
