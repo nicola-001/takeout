@@ -23,6 +23,7 @@
         ORDER BY d.update_time DESC
     </select>
 
+
     <!-- 根据菜品id批量删除菜品数据-->
     <delete id="deleteByIds">
         DELETE FROM dish WHERE id IN
@@ -30,4 +31,17 @@
             #{id}
         </foreach>
     </delete>
+
+    <!-- 动态条件查询菜品id   -->
+    <select id="list" resultType="com.sky.entity.Dish">
+        select * from dish
+        <where>
+            <if test="categoryId != null">
+                and category_id = #{categoryId}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+        </where>
+    </select>
 </mapper>

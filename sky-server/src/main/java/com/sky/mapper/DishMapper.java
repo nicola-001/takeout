@@ -28,4 +28,6 @@ public interface DishMapper extends BaseMapper<Dish> {
 
     //根据菜品id批量删除菜品
     void deleteByIds(List<Long> ids);
+
+    List<Dish> list(Dish dish);
 }
