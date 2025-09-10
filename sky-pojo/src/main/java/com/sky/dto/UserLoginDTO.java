@@ -10,6 +10,7 @@ import java.io.Serializable;
 @Data
 public class UserLoginDTO implements Serializable {
 
+    //前端传递过来的code
     private String code;
 
 }
