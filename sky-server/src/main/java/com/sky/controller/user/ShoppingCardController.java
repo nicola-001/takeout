@@ -45,4 +45,18 @@ public class ShoppingCardController {
         queryWrapper.eq(ShoppingCart::getUserId, userId);
         return Result.success(shoppingCartService.list(queryWrapper));
     }
+
+    /*
+     * 清空购物车功能
+     * */
+    @DeleteMapping("clean")
+    @ApiOperation("清空购物车")
+    public Result clean() {
+        log.info("清空购物车");
+        Long userId = BaseContext.getCurrentId();
+        LambdaQueryWrapper<ShoppingCart> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(ShoppingCart::getUserId, userId);
+        shoppingCartService.remove(queryWrapper);
+        return Result.success();
+    }
 }
