@@ -9,4 +9,6 @@ import java.util.List;
 @Mapper
 public interface ShoppingCartMapper extends BaseMapper<ShoppingCart> {
     List<ShoppingCart> myList(ShoppingCart shoppingCart);
+
+    void deleteByUserId(Long userId);
 }
