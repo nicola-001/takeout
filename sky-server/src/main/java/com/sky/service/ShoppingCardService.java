@@ -9,4 +9,7 @@ public interface ShoppingCardService extends IService<ShoppingCart> {
      * 添加购物车
      * */
     void addShoppingCart(ShoppingCartDTO shoppingCartDTO);
+
+    void subShoppingCart(ShoppingCartDTO shoppingCartDTO);
+
 }
