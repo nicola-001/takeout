@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Select;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface OrderMapper extends BaseMapper<Orders> {
@@ -32,4 +33,6 @@ public interface OrderMapper extends BaseMapper<Orders> {
 
 
     List<Orders> getByStatusAndOrderTimeLT(Integer status, LocalDateTime orderTimeStart);
+
+    Double sumByMap(Map map);
 }

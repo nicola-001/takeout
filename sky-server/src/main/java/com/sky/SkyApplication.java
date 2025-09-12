@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement //开启注解方式的事务管理
 @Slf4j
 @EnableCaching //开启缓存注解功能
-@EnableScheduling //开启定时任务功能
+@EnableScheduling//开启定时任务功能
 public class SkyApplication {
     public static void main(String[] args) {
         ConfigurableApplicationContext run = SpringApplication.run(SkyApplication.class, args);
@@ -42,4 +42,15 @@ public class SkyApplication {
         2.写sql语句时，如果写查询d表中的全部数据可以直接写d.*  但是VO数据字段必须和数据库中的表一致 否则映射不上
         3.可以写 LIKE concat('%',#{name},'%')用于模糊查询
         4.delete from xxx表 where id in (1,2,3) 优化删除的逻辑
+        --------
+        WebSocket:
+        1.前端：
+                建立连接
+                发送消息
+                接收消息
+                断开连接
+        2.后端：
+         WebSocketServer-->建立连接、断开连接、接收消息、发送消息
+         WebSocketConfig-->WebSocket配置类，用于注册WebSocket的Bean
+         WebSocketTask-->定时任务，定时向所有用户发送消息
 * */

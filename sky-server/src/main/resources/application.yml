@@ -37,6 +37,8 @@ logging:
         controller: info
 
 sky:
+  pay:
+    mock-enabled: true  # 开发/测试时设为 true，生产设为 false
   jwt:
     # 设置jwt签名加密时使用的秘钥
     admin-secret-key: itcast

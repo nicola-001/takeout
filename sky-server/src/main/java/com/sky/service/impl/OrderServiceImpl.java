@@ -1,5 +1,6 @@
 package com.sky.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sky.constant.MessageConstant;
@@ -14,18 +15,28 @@ import com.sky.service.OrderService;
 import com.sky.utils.WeChatPayUtil;
 import com.sky.vo.OrderPaymentVO;
 import com.sky.vo.OrderSubmitVO;
+import com.sky.websocket.WebSocketServer;
+import io.swagger.util.Json;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+@Slf4j
 @Service
 public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implements OrderService {
+    @Value("${app.pay.mock-enabled:false}")
+    private boolean mockEnabled; // 是否启用模拟支付
     @Autowired
     private OrderMapper orderMapper;
     @Autowired
@@ -38,6 +49,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
     private UserMapper userMapper;
     @Autowired
     private WeChatPayUtil weChatPayUtil;
+    @Autowired
+    private WebSocketServer webSocketServer;
 
     @Transactional// 开启事务注解
     @Override
@@ -111,23 +124,39 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
         Long userId = BaseContext.getCurrentId();
         User user = userMapper.selectById(userId);
 
-        //调用微信支付接口，生成预支付交易单
-        JSONObject jsonObject = weChatPayUtil.pay(
-                ordersPaymentDTO.getOrderNumber(), //商户订单号
-                new BigDecimal(0.01), //支付金额，单位 元
-                "苍穹外卖订单", //商品描述
-                user.getOpenid() //微信用户的openid
-        );
-
-        if (jsonObject.getString("code") != null && jsonObject.getString("code").equals("ORDERPAID")) {
-            throw new OrderBusinessException("该订单已支付");
+        // 如果启用了模拟支付，直接构造模拟数据，跳过微信调用
+        if (mockEnabled) {
+            System.out.println("模拟支付成功");
         }
+//
+//        //调用微信支付接口，生成预支付交易单
+//        JSONObject jsonObject = weChatPayUtil.pay(
+//                ordersPaymentDTO.getOrderNumber(), //商户订单号
+//                new BigDecimal(0.01), //支付金额，单位 元
+//                "苍穹外卖订单", //商品描述
+//                user.getOpenid() //微信用户的openid
+//        );
+//
+//        if (jsonObject.getString("code") != null && jsonObject.getString("code").equals("ORDERPAID")) {
+//            throw new OrderBusinessException("该订单已支付");
+//        }
+//
+//        OrderPaymentVO vo = jsonObject.toJavaObject(OrderPaymentVO.class);
+//        vo.setPackageStr(jsonObject.getString("package"));
+//
+//        return vo;
+        // 👇 下面这 6 行，就是你全部需要的“模拟支付”逻辑！
+        OrderPaymentVO vo = new OrderPaymentVO();
+        vo.setTimeStamp(String.valueOf(System.currentTimeMillis() / 1000));
+        vo.setNonceStr(RandomStringUtils.randomAlphanumeric(32));
+        vo.setPackageStr("prepay_id=mock_" + System.currentTimeMillis());
+        vo.setSignType("RSA");
+        vo.setPaySign("mock_pay_sign_2025"); // 任意字符串，前端不验签
 
-        OrderPaymentVO vo = jsonObject.toJavaObject(OrderPaymentVO.class);
-        vo.setPackageStr(jsonObject.getString("package"));
-
+        log.info(" 模拟支付成功，已返回伪造数据: {}", vo);
         return vo;
     }
+
 
     /**
      * 支付成功，修改订单状态
@@ -148,6 +177,15 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
                 .build();
 
         orderMapper.update(orders);
+
+        //通过webscket向客户端浏览器推送消息 type orderId content
+        Map map = new HashMap<>();
+        map.put("type", 1);//1 来单提醒  2客户催单
+        map.put("orderId", ordersDB.getId());
+        map.put("content", "订单号"+outTradeNo+"支付成功");
+
+        String json = JSON.toJSONString(map);
+        webSocketServer.sendToAllClient(json);
     }
 
 }
