@@ -46,7 +46,10 @@
         根据订单状态和下单时间查询订单
     -->
     <select id="getByStatusAndOrderTimeLT" resultType="com.sky.entity.Orders">
-        select * from orders where status = #{status} and order_time &lt; #{orderTimeStart}
+        select *
+        from orders
+        where status = #{status}
+          and order_time &lt; #{orderTimeStart}
     </select>
     <select id="sumByMap" resultType="java.lang.Double">
         select sum(amount) from orders
@@ -62,4 +65,39 @@
             </if>
         </where>
     </select>
+    <select id="countByMap" resultType="java.lang.Integer">
+        select count(id) from orders
+        <where>
+            <if test="begin != null">
+                and order_time &gt; #{begin}
+            </if>
+            <if test="end != null">
+                and order_time &lt; #{end}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+        </where>
+    </select>
+    <!--
+       获取销量排名前10
+   -->
+
+    <select id="getSalesTop10" resultType="com.sky.dto.GoodsSalesDTO">
+        select od.name, sum(od.number) as number
+        from order_detail od,
+        orders o
+        where od.order_id = o.id and o.status = 5
+        <if test="begin != null">
+            and o.order_time &gt; #{begin}
+        </if>
+        <if test="end != null">
+            and o.order_time &lt; #{end}
+        </if>
+        group by od.name
+        order by sum(name) desc
+        limit 0,10;
+    </select>
+
+
 </mapper>
